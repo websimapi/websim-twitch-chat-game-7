@@ -37,6 +37,21 @@ export class Player {
         this.actionTimer = 0;
         this.inventory = { logs: [], leaves: [] };
         this.pendingHarvest = []; // {x, y, type} for bushes
+        this.skills = {
+            woodcutting: [],
+            gathering: []
+        };
+    }
+
+    addExperience(skill, amount) {
+        if (this.skills[skill]) {
+            const timestamp = Date.now();
+            this.skills[skill].push({ amount, timestamp });
+            const totalExp = this.skills[skill].reduce((sum, entry) => sum + entry.amount, 0);
+            console.log(`[${this.username}] Gained +${amount} XP in ${skill}. Total: ${totalExp}. Timestamp: ${timestamp}`);
+        } else {
+            console.warn(`[${this.username}] Attempted to add XP to non-existent skill: ${skill}`);
+        }
     }
 
     setInitialPosition(gameMap) {
@@ -96,6 +111,7 @@ export class Player {
             inventory: this.inventory,
             state: this.state,
             actionTarget: this.actionTarget, // Save the action target
+            skills: this.skills,
         };
     }
 
@@ -129,6 +145,7 @@ export class Player {
         this.username = state.username || this.username;
         this.color = state.color || this.color;
         this.inventory = state.inventory || { logs: [], leaves: [] };
+        this.skills = state.skills || { woodcutting: [], gathering: [] };
 
         this.actionTarget = state.actionTarget || null; // Restore the action target
         this.state = state.state || PLAYER_STATE.IDLE;

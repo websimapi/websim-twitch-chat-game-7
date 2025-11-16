@@ -20,6 +20,7 @@ function finishChopping(player, gameMap) {
     player.actionTarget = { x: treeX, y: treeY };
 
     console.log(`[${player.username}] Finished chopping tree. Timestamp: ${Date.now()}`);
+    player.addExperience('woodcutting', 3);
 
     player.pendingHarvest = [];
     let spawnedBushes = 0;
@@ -66,6 +67,8 @@ function finishHarvestingLogs(player, gameMap) {
         player.inventory.logs.push({ timestamp: Date.now() });
     }
     console.log(`[${player.username}] Harvested ${numLogs} logs. Total: ${player.inventory.logs.length}. Timestamp: ${Date.now()}`);
+    player.addExperience('woodcutting', numLogs);
+    player.addExperience('gathering', 2);
     gameMap.grid[player.actionTarget.y][player.actionTarget.x] = TILE_TYPE.GRASS;
     harvestNextBush(player, gameMap);
 }
@@ -92,6 +95,7 @@ function finishHarvestingBushes(player, gameMap) {
     player.inventory.leaves.push({ amount: numLeaves, timestamp: Date.now() });
     const totalLeaves = player.inventory.leaves.reduce((sum, item) => sum + item.amount, 0);
     console.log(`[${player.username}] Harvested ${numLeaves} leaves. Total: ${totalLeaves}. Timestamp: ${Date.now()}`);
+    player.addExperience('gathering', 1);
     gameMap.grid[player.actionTarget.y][player.actionTarget.x] = TILE_TYPE.GRASS;
     harvestNextBush(player, gameMap);
 }
